@@ -1,9 +1,15 @@
 <template>
-  <Tutorial/>
+  <div>
+    <h1>{{ text }}</h1>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'IndexPage'
+  data() {
+    return {
+      text: "Hello World"
+    }
+  }
 }
 </script>
