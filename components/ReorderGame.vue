@@ -4,45 +4,68 @@
         <div v-show="playButton" >
             <button @click="showCategory = true; playButton = false;">Play</button>
         </div>
+        
+        <div v-show="usernameInput">
+            <input type="text" v-model="username" />
+        </div>
 
         <div v-show="showCategory">
-            <button @click=" selectCategory(0); showDifficulty = true; showCategory = false;" >Country Population</button>
-            <button @click=" selectCategory(1); showDifficulty = true; showCategory = false;">Country Area</button>
-            <button @click=" selectCategory(2); showDifficulty = true; showCategory = false;">World War 1 Timeline</button>
+            <button @click=" selectCategory(0); showDifficulty = true; showCategory = false;" >Geography</button><br>
+            <button @click=" selectCategory(2); showDifficulty = true; showCategory = false;">History</button>
         </div>
 
         <div v-show="showDifficulty">
             <p>You have selected {{categoryText}}. Choose a difficulty.</p>
-            <button @click=" selectDifficulty(0); randomizeList(); showGame = true; showDifficulty = false">Easy</button>
-            <button @click=" selectDifficulty(1); randomizeList(); showGame = true; showDifficulty = false">Intermediate</button>
+            <button @click=" selectDifficulty(0); randomizeList(); showGame = true; showDifficulty = false">Easy</button><br>
+            <button @click=" selectDifficulty(1); randomizeList(); showGame = true; showDifficulty = false">Intermediate</button><br>
             <button @click=" selectDifficulty(2); randomizeList(); showGame = true; showDifficulty = false">Difficult</button>
         </div>
 
         <div v-show="showGame">
+            <!-- 
+                game start
+                if correct proceed to next game
+                then increase score
+                if wrong show correct answer
+                then proceed to next game
+                if max games reached show score
+             -->
+
+
             <p>You have selected {{difficultyText}}. Goodluck!</p>
             <button @click="playButton = true; showGame = false"> Quit </button>
             <div class="Instruction">
                 <p>Drag the countries in order of population descending (from highest population to lowest)</p>
             </div>
-            <ul>
-                <li v-for="(item, index) in random_items" 
-                :key="item.id" 
-                :draggable="true" 
-                @dragstart="dragStart(index)" 
-                @dragover.prevent @drop="drop(index)"
-                >
-                {{ item.id }}
-                </li>
-            </ul>
-            <button>Submit</button>
-            <!-- <div>
-                Current order of index: 
+            
+            <div v-show="gameDraggable">
+                <div>
+                    <p>Question {{ gameCount }}/{{ maxGames }}</p>
+                </div>
+                <p>Stars: {{ stars }}</p>
                 <ul>
-                    <li v-for="(item, index) in getCurrentOrder()" :key="item.id">
-                        {{ item }}
-                    </li>
+                <li v-for="(item, index) in random_items" 
+                    :key="item.id" 
+                    :draggable="true" 
+                    @dragstart="dragStart(index)" 
+                    @dragover.prevent 
+                    @drop="drop(index)">
+                    {{ item.id }}
+                </li>
                 </ul>
-            </div> -->
+
+                <div v-show="displayCorrectAnswer">
+                    <!-- modal to -->
+                    <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                </div>
+                
+                <button @click="checkListIfCorrect();">Submit</button>
+            </div>
+
+            <div v-show="showResults">
+
+            </div>
+
         </div>
 
     </div>
@@ -57,14 +80,24 @@ export default {
             showCategory: false,
             showDifficulty: false,
             showGame: false,
+            displayCorrectAnswer: false,
+            gameDraggable: true,
+
             difficultyText: '',
             categoryText: '',
-            category: 0,
 
+            category: 0,
+            stars: 0,
+            repeatCount: 1,
+            maxGames: 5,
+            gameCount: 0,
+            
+            random_items: [],
             categorySelection: [
                 {
                     id: 0,
                     name: 'Country Population',
+                    tag: 'Geography',
                     data: [
                         { id: 1, name: 'China', population: 1439323776 },
                         { id: 2, name: 'India', population: 1380004385 },
@@ -81,6 +114,7 @@ export default {
                 {
                     id: 1,
                     name: 'Country Area',
+                    tag: 'Geography',
                     data: [
                         { id: 1, name: 'CA China', area: 9640821 },
                         { id: 2, name: 'India', area: 3287590 },
@@ -97,36 +131,33 @@ export default {
                 {
                     id: 2,
                     name: 'World War I Timeline',
+                    tag: 'History',
                     data: [
                         { id: 1, name: 'Archduke Francis Ferdinand is assassinated.', date: 'June 28, 1914'},
                         { id: 2, name: 'Austria-Hungary declares war on Serbia, beginning World War I.', date: 'July 28, 1914'},
                         { id: 3, name: 'Germany invades Luxembourg and Belgium. France invades Alsace. British forces arrive in France. \
-                                    Nations allied against Germany were eventually to include Great Britain, Russia, Italy, Australia, \
+                                        Nations allied against Germany were eventually to include Great Britain, Russia, Italy, Australia, \
                                         New Zealand, South Africa, Rhodesia, Romania, Greece, France, Belgium, United States, Canada, Serbia, \
                                         India, Portugal, Montenegro, and Poland.', date: 'August 2-7, 1914'},
                         { id: 4, name: 'Austria-Hungary invades Russia.', date: 'August 10, 1914'},
                         { id: 5, name: 'Allied forces halt German advance into France during First Battle of the Marne.', date: 'September 9, 1914'},
                         { id: 6, name: 'Germany begins naval blockade of Great Britain.', date: 'February 18, 1915'},
                         { id: 7, name: 'Germany begins naval blockade of Great Britain.', date: 'April 25, 1915'},
-                        { id: 8, name: 'German submarine sinks the passenger liner Lusitania during crossing from New York to Liverpool, England, killing 128 Americans.', date: 'May 7, 1915'},
+                        { id: 8, name: 'German submarine sinks the passenger liner Lusitania during crossing from New York to Liverpool, \
+                                        England, killing 128 Americans.', date: 'May 7, 1915'},
                         { id: 9, name: 'Italy declares war on Austria-Hungary.', date: 'August 4, 1914'},
                     ]
                 }
             ],
-            
-            random_items: [],
-
         };
     },
     computed: {
-        // itemLimit() {
-        //     const maxItems = 5;
-        //     const list = [];
-        //     for (let i = 0; i < maxItems && i < this.category.length; i++) {
-        //         list.push(this.category[i]);
-        //     }
-        //     return list;
-        // },
+        gameCount() {
+            const maxGames = 5;
+            for (let i = 0; i < maxGames; i++) {
+                return i;
+            }
+        },
     },
     methods: {
         dragStart(index) {
@@ -168,26 +199,46 @@ export default {
                     break;
             }
         },
+        randomizeList() {
+            const maxItems = 5;
+            const list = [];
+            const usedIndexes = new Set(); // Keep track of used indexes
+            while (list.length < maxItems && usedIndexes.size < this.category.length) {
+                const randomIndex = Math.floor(Math.random() * this.category.length);
+                if (!usedIndexes.has(randomIndex)) { // Check if index has already been used
+                    list.push(this.category[randomIndex]);
+                    usedIndexes.add(randomIndex);
+                }
+            }
+            this.random_items = list;
+        },
         getCurrentOrder() {
             const currentOrder = [];
-            for (let i = 0; i < this.category.length; i++) {
-                currentOrder.push(this.category[i].id);
+            for (let i = 0; i < this.random_items.length; i++) {
+                currentOrder.push(this.random_items[i].id);
             }
             return currentOrder;
         },
-        randomizeList() {
-        const maxItems = 5;
-        const list = [];
-        const usedIndexes = new Set(); // Keep track of used indexes
-        while (list.length < maxItems && usedIndexes.size < this.category.length) {
-            const randomIndex = Math.floor(Math.random() * this.category.length);
-            if (!usedIndexes.has(randomIndex)) { // Check if index has already been used
-                list.push(this.category[randomIndex]);
-                usedIndexes.add(randomIndex);
+        getCorrectOrder() {
+            const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
+            return sortedList.map(item => item.id);
+        },
+        checkListIfCorrect() {
+            const currentOrder = this.getCurrentOrder();
+            const correctOrder = this.getCorrectOrder();
+            if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
+                this.stars+=1;
+                this.gameCount += 1;
+                this.displayCorrectAnswer = false;
+                this.randomizeList();
+            } else {
+                // display correct order
+                this.gameCount += 1;
+                this.displayCorrectAnswer = true;
+                this.randomizeList();
             }
-        }
-        this.random_items = list;
-        }
+        },
+        // if gamecount is 5, then display show results
 
     },
 };

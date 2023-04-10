@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <SortableList />
+    <ReorderGame />
   </div>
 </template>
 
 <script>
-import SortableList from '@/components/SortableList.vue';
+import ReorderGame from '@/components/ReorderGame.vue';
 
 export default {
   name: 'App',
   components: {
-    SortableList
+    ReorderGame
   },
 }
 </script>
