@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="text-align: center;">
         <h1>Reorder Game</h1>
         <div v-show="playButton" >
             <button @click="showCategory = true; playButton = false;">Play</button>
@@ -60,7 +60,7 @@
                         <!-- modal to -->
                         <p>Correct Answer is: {{ getCorrectOrder() }} </p>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Close</button>
                                 <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
                             </div>
                         </div>
@@ -245,6 +245,10 @@ export default {
         },
         // if gamecount is 5, then display show results
 
+        closeModal() {
+            this.displayCorrectAnswer = false;
+        },
+
     },
 };
 </script>
@@ -252,6 +256,7 @@ export default {
 <style>
 h1 {
     text-align: center;
+    padding-top: 50px;
     
 }
 ul {
@@ -264,6 +269,7 @@ li {
     background-color: #eee;
     cursor: pointer;
     width: 50%;
+    align-items: center;
 }
 
 button {
@@ -287,5 +293,16 @@ button {
   padding: 1rem;
   border-radius: 0.5rem;
 }
+
+button {
+  background: linear-gradient(to bottom right, #FFDAB9, #FF6347);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
 
 </style>
