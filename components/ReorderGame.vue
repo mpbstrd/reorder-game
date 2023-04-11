@@ -55,8 +55,16 @@
                 </ul>
 
                 <div v-show="displayCorrectAnswer">
-                    <!-- modal to -->
-                    <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                 <div class="modal">
+                    <div class="modal-content">
+                        <!-- modal to -->
+                        <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <button @click="checkListIfCorrect();">Submit</button>
@@ -233,7 +241,7 @@ export default {
                 this.gameCount += 1;
                 this.displayCorrectAnswer = true;
                 this.randomizeList();
-            }
+            } 
         },
         // if gamecount is 5, then display show results
 
@@ -244,6 +252,7 @@ export default {
 <style>
 h1 {
     text-align: center;
+    
 }
 ul {
     list-style: none;
@@ -257,5 +266,26 @@ li {
     width: 50%;
 }
 
+button {
+    text-align: center;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
 
 </style>
