@@ -98,6 +98,7 @@ export default {
                     id: 0,
                     name: 'Country Population',
                     tag: 'Geography',
+                    instruction: 'Arrange the countries in order of population descending (from highest population to lowest)',
                     data: [
                         { id: 1, name: 'China', population: 1439323776 },
                         { id: 2, name: 'India', population: 1380004385 },
@@ -115,6 +116,7 @@ export default {
                     id: 1,
                     name: 'Country Area',
                     tag: 'Geography',
+                    instruction: 'Arrange the countries in order of area descending (from highest area to lowest)',
                     data: [
                         { id: 1, name: 'CA China', area: 9640821 },
                         { id: 2, name: 'India', area: 3287590 },
@@ -130,22 +132,17 @@ export default {
                 },
                 {
                     id: 2,
-                    name: 'World War I Timeline',
+                    name: 'Invention Timeline',
                     tag: 'History',
                     data: [
-                        { id: 1, name: 'Archduke Francis Ferdinand is assassinated.', date: 'June 28, 1914'},
-                        { id: 2, name: 'Austria-Hungary declares war on Serbia, beginning World War I.', date: 'July 28, 1914'},
+                        { id: 1, name: 'Wheel', date: '5000 BC'},
+                        { id: 2, name: 'Gun Powder', date: '9th century'},
                         { id: 3, name: 'Germany invades Luxembourg and Belgium. France invades Alsace. British forces arrive in France. \
                                         Nations allied against Germany were eventually to include Great Britain, Russia, Italy, Australia, \
                                         New Zealand, South Africa, Rhodesia, Romania, Greece, France, Belgium, United States, Canada, Serbia, \
                                         India, Portugal, Montenegro, and Poland.', date: 'August 2-7, 1914'},
                         { id: 4, name: 'Austria-Hungary invades Russia.', date: 'August 10, 1914'},
                         { id: 5, name: 'Allied forces halt German advance into France during First Battle of the Marne.', date: 'September 9, 1914'},
-                        { id: 6, name: 'Germany begins naval blockade of Great Britain.', date: 'February 18, 1915'},
-                        { id: 7, name: 'Germany begins naval blockade of Great Britain.', date: 'April 25, 1915'},
-                        { id: 8, name: 'German submarine sinks the passenger liner Lusitania during crossing from New York to Liverpool, \
-                                        England, killing 128 Americans.', date: 'May 7, 1915'},
-                        { id: 9, name: 'Italy declares war on Austria-Hungary.', date: 'August 4, 1914'},
                     ]
                 }
             ],
