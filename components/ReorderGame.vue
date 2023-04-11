@@ -50,7 +50,7 @@
                     @dragstart="dragStart(index)" 
                     @dragover.prevent 
                     @drop="drop(index)">
-                    {{ item.id }}
+                    {{ item.name }}
                 </li>
                 </ul>
 
@@ -242,6 +242,9 @@ export default {
 </script>
   
 <style>
+h1 {
+    text-align: center;
+}
 ul {
     list-style: none;
     padding: 0;
@@ -253,4 +256,6 @@ li {
     cursor: pointer;
     width: 50%;
 }
+
+
 </style>
