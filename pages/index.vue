@@ -1,9 +1,16 @@
 <template>
-  <Tutorial/>
+  <div id="app">
+    <ReorderGame />
+  </div>
 </template>
 
 <script>
+import ReorderGame from '@/components/ReorderGame.vue';
+
 export default {
-  name: 'IndexPage'
+  name: 'App',
+  components: {
+    ReorderGame
+  },
 }
 </script>
