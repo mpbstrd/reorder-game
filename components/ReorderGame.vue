@@ -59,7 +59,7 @@
                     <div class="modal-content">
                         <p>Correct Answer is: {{ getCorrectOrder() }} </p>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
                                 <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
                             </div>
                         </div>
@@ -255,8 +255,9 @@ export default {
 <style>
 
 .container {
+  background-color: transparent;
   position: relative;
-  z-index: 1;
+  z-index: 1;   
 }
 
 .container::before {
@@ -271,7 +272,7 @@ export default {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100vh;
+  height: 100%;
   filter: blur(30px);
   z-index: -1;
 }
@@ -280,7 +281,7 @@ h1 {
     text-align: center;
     padding-top: 50px;
     color:#eee;
-    font-size: 4vw;
+    font-size: 3rem;
 }
 
 p {
@@ -291,21 +292,39 @@ p {
     list-style: none;
     padding: 0;
     text-align: center  ;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center ;
 }
 .itemList Li {
     padding: 10px;
     margin-bottom: 5px;
-    background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
+    background: linear-gradient(to top, #354cfd,  #4c49fe, #6f6dfb);
     color: #ffffff;
     cursor: pointer;
     width: 50%;
     align-items: center;
+    display: inline-block;
 }
 
 .modal-content p{
     color:black;
 }
 
+.modal-content button {
+    background: transparent;
+    border:none;
+    color: rgb(0, 30, 255);
+    cursor:pointer;
+    font-size:14px;
+    padding: 10px 20px;
+}
+
+.modal-content button:hover{
+    background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
+    color:rgb(255, 255, 255);
+}
 
 .modal {
   position: fixed;
@@ -314,7 +333,7 @@ p {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  color:#fff;
+  color:#000000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -332,7 +351,7 @@ button {
   border: none;
   text-align: center;
   max-width: 100%;
-  height:50px;
+
   padding: 10px 20px;
   border-radius: 5px;   
   font-size: 16px;
@@ -340,10 +359,88 @@ button {
   transition: transform 0.2s ease-in-out;
 }
 
-.button:hover {
+button:hover {
   transform: scale(1.1);
 }
 
+/* Styles for screens smaller than 768px (e.g. smartphones) */
+@media (max-width: 767px) {
+    .container {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+    font-size:1rem;
+    }
+
+    button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  button:hover {
+  transform: scale(1.1);
+}
+}
+
+/* Styles for screens between 768px and 1023px (e.g. tablets) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        width: 80%;
+    }
+
+    h1 {
+        font-size: 4rem;
+    }
+
+    p {
+    font-size:1.5rem;
+    }
+
+    button {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  button:hover {
+  transform: scale(1.1);
+}
+}
+
+/* Styles for screens larger than 1023px (e.g. desktops) */
+@media (min-width: 1024px) {
+    .container {
+        width: 60%;
+    }
+
+    h1 {
+        font-size: 5rem;
+    }
+
+    p {
+        font-size:3rem
+    }
+    }
+
+    button {
+    font-size: 18px;
+    padding: 12px 16px;
+  }
+
+button:hover {
+  transform: scale(1.1);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 
 
