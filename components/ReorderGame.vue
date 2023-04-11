@@ -1,6 +1,6 @@
 <template>
-    <div style="text-align: center;">
-        <h1>Reorder Game</h1>
+    <div class="container" style="text-align: center;">
+        <h1>REORDER GAME</h1>
         <div v-show="playButton" >
             <button @click="showCategory = true; playButton = false;">Play</button>
         </div>
@@ -43,7 +43,7 @@
                     <p>Question {{ gameCount }}/{{ maxGames }}</p>
                 </div>
                 <p>Stars: {{ stars }}</p>
-                <ul>
+                <ul class="itemList">
                 <li v-for="(item, index) in random_items" 
                     :key="item.id" 
                     :draggable="true" 
@@ -57,7 +57,6 @@
                 <div v-show="displayCorrectAnswer">
                  <div class="modal">
                     <div class="modal-content">
-                        <!-- modal to -->
                         <p>Correct Answer is: {{ getCorrectOrder() }} </p>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Close</button>
@@ -254,27 +253,59 @@ export default {
 </script>
   
 <style>
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  background-image: url("@/static/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  filter: blur(30px);
+  z-index: -1;
+}
+
 h1 {
     text-align: center;
     padding-top: 50px;
-    
+    color:#eee;
+    font-size: 4vw;
 }
-ul {
+
+p {
+    font-size: 1vw;
+    color: white;
+}
+.itemList{
     list-style: none;
     padding: 0;
+    text-align: center  ;
 }
-li {
+.itemList Li {
     padding: 10px;
     margin-bottom: 5px;
-    background-color: #eee;
+    background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
+    color: #ffffff;
     cursor: pointer;
     width: 50%;
     align-items: center;
 }
 
-button {
-    text-align: center;
+.modal-content p{
+    color:black;
 }
+
 
 .modal {
   position: fixed;
@@ -283,6 +314,7 @@ button {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  color:#fff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -295,14 +327,24 @@ button {
 }
 
 button {
-  background: linear-gradient(to bottom right, #FFDAB9, #FF6347);
+  background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
   color: #ffffff;
   border: none;
+  text-align: center;
+  max-width: 100%;
+  height:50px;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 5px;   
   font-size: 16px;
   margin-bottom: 10px;
+  transition: transform 0.2s ease-in-out;
 }
+
+.button:hover {
+  transform: scale(1.1);
+}
+
+
 
 
 </style>
