@@ -6,8 +6,8 @@
         </div>
 
         <div v-show="showCategory">
-            <button @click=" selectCategory(0); randomizeList(); showCategory = false; showGame = true;" >Geography</button><br>
-            <button @click=" selectCategory(1); randomizeList(); showCategory = false; showGame = true;">History</button><br>
+            <button @click=" selectCategory(0); showCategory = false; showGame = true;" >Geography</button><br>
+            <button @click=" selectCategory(1); showCategory = false; showGame = true;">History</button><br>
             <button @click="playButton = true; showCategory = false"> Back </button>
         </div>
 
@@ -21,9 +21,7 @@
                 if max games reached show score
              -->
 
-
-            <p>You have selected {{difficultyText}}. Goodluck!</p>
-            <button @click="playButton = true; showGame = false"> Quit </button>
+            
             <div class="Instruction">
                 <p> {{ categoryText }} </p>
             </div>
@@ -43,31 +41,31 @@
                     {{ item.name }}
                 </li>
                 </ul>
-
-                <div v-show="displayCorrectAnswer">
-                 <div class="modal">
-                    <div class="modal-content">
-                        <p>Correct Answer is: {{ getCorrectOrder() }} </p>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
-                                <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
                 <button @click="submitAnswers();">Submit</button>
             </div>
+            
+            <div v-show="displayCorrectAnswer">
+                <div class="modal">
+                   <div class="modal-content">
+                       <p>Correct Answer is: {{ getCorrectOrderString() }}</p>
+                           <div class="modal-footer">
+                               <button type="button" class="btn btn-secondary" @click="closeModal" data-dismiss="modal">Proceed</button>
+                               <button type="button" class="btn btn-primary"  v-if="correctAnswer">Next</button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
 
-            <div v-show="showResults">
-                <div>show how many stars gained here</div>
-                <div>{{ starPrompt }}</div>
-                <button @click="randomizeList(); showCategory = false; showGame = true;">Try again?</button>
-                <button @click="playButton = true; showCategory = false"> Main Menu </button>
-            </div>
-
+            <button @click="playButton = true; showGame = false; resetGame(); "> Quit </button>
         </div>
 
+        <div v-show="showResults">
+            <div>show how many stars gained here</div>
+            <div>{{ starPrompt }}</div>
+            <button @click="randomizeList(); resetGame(); showCategory = false; showGame = true;">Try again?</button>
+            <button @click="randomizeList(); resetGame(); playButton = true; showResults = false; showCategory = false"> Main Menu </button>
+        </div>
     </div>
 </template>
   
@@ -83,9 +81,12 @@ export default {
             showResults: false,
             displayCorrectAnswer: false,
             gameDraggable: true,
+            correctAnswer: false,
 
+            catIndex: 0,
             starPrompt: '',
             categoryText: '',
+            globalCatString: '',
 
             category: 0,
             stars: 0,
@@ -242,18 +243,6 @@ export default {
                 {
                     id: 12,
                     tag: 'Geography',
-                    instruction: 'Arrange the countries according to their English literacy rates.',
-                    data: [
-                        { id: 1, name: '', info: ''},
-                        { id: 2, name: '', info: ''},
-                        { id: 3, name: '', info: ''},
-                        { id: 4, name: '', info: ''},
-                        { id: 5, name: '', info: ''},
-                    ]
-                },
-                {
-                    id: 13,
-                    tag: 'Geography',
                     instruction: 'Arrange the countries from highest to lowest based on their olympic ranking.',
                     data: [
                         { id: 1, name: 'Great Britain', info: '883 medals'},
@@ -309,22 +298,26 @@ export default {
         selectCategory(categoryIndex) {
             switch(categoryIndex) {
                 case 0: // geography
-                    const geographyQuestions = this.questionData.filter(item => item.tag === 'Geography');
-                    const geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
-                    this.category = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].data;
-                    this.categoryText = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].instruction;
+                    this.globalCatString = "Geography";
+                    this.categorizer("Geography");
+                    this.randomizeList();
                     break;
                 case 1: // history
-                const historyQuestions = this.questionData.filter(item => item.tag === 'History');
-                    const historyIndex = Math.floor(Math.random() * historyQuestions.length);
-                    this.category = this.questionData.filter(item => item.tag === 'History')[historyIndex].data;
-                    this.categoryText = this.questionData.filter(item => item.tag === 'History')[historyIndex].instruction;
+                    this.globalCatString = "History";
+                    this.categorizer("History");
+                    this.randomizeList();
                     break;
                 case 2:
                     this.category = this.questionData[2].data;
                     this.categoryText = this.questionData[2].name;
                     break;
             }
+        },
+        categorizer(categoryString){
+            let geographyQuestions = this.questionData.filter(item => item.tag === categoryString);
+            let geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
+            this.category = this.questionData.filter(item => item.tag === categoryString)[geographyIndex].data;
+            this.categoryText = this.questionData.filter(item => item.tag === categoryString)[geographyIndex].instruction;
         },
         randomizeList() {
             const maxItems = 5;
@@ -346,13 +339,21 @@ export default {
             }
             return currentOrder;
         },
-        getCorrectOrder() {
+        getCorrectOrderString() {
             const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
             const correctOrder = [];
             for (let i = 0; i < sortedList.length; i++) {
                 correctOrder.push(sortedList[i].name);
             }   
             return correctOrder.join(', ');
+        },
+        getCorrectOrder() {
+            const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
+            const correctOrder = [];
+            for (let i = 0; i < sortedList.length; i++) {
+                correctOrder.push(sortedList[i].id);
+            }   
+            return correctOrder;
         },
 
         submitAnswers() {
@@ -366,17 +367,19 @@ export default {
         checkListIfCorrect() {
             const currentOrder = this.getCurrentOrder();
             const correctOrder = this.getCorrectOrder();
+            console.log("current: " + currentOrder);
+            console.log("correct: " + correctOrder);
             if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
                 this.stars+=1;
                 this.gameCount += 1;
                 this.displayCorrectAnswer = false;
+                this.categorizer(this.globalCatString);
                 this.randomizeList();
             } else {
                 // display correct order
                 this.gameCount += 1;
                 this.displayCorrectAnswer = true;
-                this.randomizeList();
-            } 
+            }
         },
         resultPrompts() {
             if (this.stars == 1){
@@ -400,9 +403,15 @@ export default {
             }
             return geographyData;
         },
-
-
+        resetGame() {
+            this.showGame = false;
+            this.showResults = false;
+            this.stars = 0;
+            this.gameCount = 0;
+        },
         closeModal() {
+            this.categorizer(this.globalCatString); 
+            this.randomizeList(); 
             this.displayCorrectAnswer = false;
         },
 
