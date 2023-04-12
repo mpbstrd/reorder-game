@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <h1>{{ text }}</h1>
+  <div id="app">
+    <ReorderGame />
   </div>
 </template>
 
 <script>
+import ReorderGame from '@/components/ReorderGame.vue';
+
 export default {
-  data() {
-    return {
-      text: "Hello World"
-    }
-  }
+  name: 'App',
+  components: {
+    ReorderGame
+  },
 }
 </script>
