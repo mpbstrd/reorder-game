@@ -412,7 +412,7 @@ button:hover {
 }
 
 /* Styles for screens larger than 1023px (e.g. desktops) */
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
     .container {
         width: 60%;
     }
@@ -424,7 +424,7 @@ button:hover {
     p {
         font-size:3rem
     }
-    }
+    } */
 
     button {
     font-size: 18px;
