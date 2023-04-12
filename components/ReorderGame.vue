@@ -272,7 +272,7 @@ export default {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100%;
+  height: 100vh;
   filter: blur(30px);
   z-index: -1;
 }
@@ -351,7 +351,6 @@ button {
   border: none;
   text-align: center;
   max-width: 100%;
-
   padding: 10px 20px;
   border-radius: 5px;   
   font-size: 16px;
@@ -414,15 +413,15 @@ button:hover {
 /* Styles for screens larger than 1023px (e.g. desktops) */
 @media (min-width: 1024px) {
     .container {
-        width: 60%;
+        width: 100%;
     }
 
     h1 {
-        font-size: 5rem;
+        font-size: 3rem;
     }
 
     p {
-        font-size:3rem
+        font-size:1rem
     }
     }
 
