@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h1>Reorder Game</h1>
+    <div class="container" style="text-align: center;">
+        <h1>REORDER GAME</h1>
         <div v-show="playButton" >
             <button @click="showCategory = true; playButton = false;">Play</button>
         </div>
@@ -33,7 +33,7 @@
                     <p>Question {{ gameCount+1 }}/{{ maxGames }}</p>
                 </div>
                 <p>Stars: {{ stars }}</p>
-                <ul>
+                <ul class="itemList">
                 <li v-for="(item, index) in random_items" 
                     :key="item.id" 
                     :draggable="true" 
@@ -45,8 +45,15 @@
                 </ul>
 
                 <div v-show="displayCorrectAnswer">
-                    <!-- modal to -->
-                    <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                 <div class="modal">
+                    <div class="modal-content">
+                        <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
+                                <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <button @click="submitAnswers();">Submit</button>
@@ -369,7 +376,7 @@ export default {
                 this.gameCount += 1;
                 this.displayCorrectAnswer = true;
                 this.randomizeList();
-            }
+            } 
         },
         resultPrompts() {
             if (this.stars == 1){
@@ -395,20 +402,203 @@ export default {
         },
 
 
+        closeModal() {
+            this.displayCorrectAnswer = false;
+        },
+
     },
 };
 </script>
   
 <style>
-ul {
+
+.container {
+  background-color: transparent ;
+  position: relative;
+  z-index: 1;   
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  background-image: url("@/static/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  filter: blur(30px);
+  z-index: -1;
+}
+
+h1 {
+    text-align: center;
+    padding-top: 50px;
+    color:#eee;
+    font-size: 3rem;
+}
+
+p {
+    font-size: 1vw;
+    color: white;
+}
+.itemList{
     list-style: none;
     padding: 0;
+    text-align: center  ;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center ;
 }
-li {
+.itemList Li {
     padding: 10px;
     margin-bottom: 5px;
-    background-color: #eee;
+    background: linear-gradient(to top, #354cfd,  #4c49fe, #6f6dfb);
+    color: #ffffff;
     cursor: pointer;
     width: 50%;
+    align-items: center;
+    display: inline-block;
 }
+
+.modal-content p{
+    color:black;
+}
+
+.modal-content button {
+    background: transparent;
+    border:none;
+    color: rgb(0, 30, 255);
+    cursor:pointer;
+    font-size:14px;
+    padding: 10px 20px;
+}
+
+.modal-content button:hover{
+    background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
+    color:rgb(255, 255, 255);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color:#000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+button {
+  background: linear-gradient(to top, #455af8,  #4542ff, #918fff);
+  color: #ffffff;
+  border: none;
+  text-align: center;
+  max-width: 100%;
+  padding: 10px 20px;
+  border-radius: 5px;   
+  font-size: 16px;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+/* Styles for screens smaller than 768px (e.g. smartphones) */
+@media (max-width: 767px) {
+    .container {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+    font-size:1rem;
+    }
+
+    button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  button:hover {
+  transform: scale(1.1);
+}
+}
+
+/* Styles for screens between 768px and 1023px (e.g. tablets) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        width: 80%;
+    }
+
+    h1 {
+        font-size: 4rem;
+    }
+
+    p {
+    font-size:1.5rem;
+    }
+
+    button {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  button:hover {
+  transform: scale(1.1);
+}
+}
+
+/* Styles for screens larger than 1023px (e.g. desktops) */
+@media (min-width: 1024px) {
+    .container {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+        font-size:1rem
+    }
+    }
+
+    button {
+    font-size: 18px;
+    padding: 12px 16px;
+  }
+
+button:hover {
+  transform: scale(1.1);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
 </style>
