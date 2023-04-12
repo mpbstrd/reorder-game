@@ -4,21 +4,11 @@
         <div v-show="playButton" >
             <button @click="showCategory = true; playButton = false;">Play</button>
         </div>
-        
-        <div v-show="usernameInput">
-            <input type="text" v-model="username" />
-        </div>
 
         <div v-show="showCategory">
-            <button @click=" selectCategory(0); showDifficulty = true; showCategory = false;" >Geography</button><br>
-            <button @click=" selectCategory(2); showDifficulty = true; showCategory = false;">History</button>
-        </div>
-
-        <div v-show="showDifficulty">
-            <p>You have selected {{categoryText}}. Choose a difficulty.</p>
-            <button @click=" selectDifficulty(0); randomizeList(); showGame = true; showDifficulty = false">Easy</button><br>
-            <button @click=" selectDifficulty(1); randomizeList(); showGame = true; showDifficulty = false">Intermediate</button><br>
-            <button @click=" selectDifficulty(2); randomizeList(); showGame = true; showDifficulty = false">Difficult</button>
+            <button @click=" selectCategory(0); randomizeList(); showCategory = false; showGame = true;" >Geography</button><br>
+            <button @click=" selectCategory(1); randomizeList(); showCategory = false; showGame = true;">History</button><br>
+            <button @click="playButton = true; showCategory = false"> Back </button>
         </div>
 
         <div v-show="showGame">
@@ -35,12 +25,12 @@
             <p>You have selected {{difficultyText}}. Goodluck!</p>
             <button @click="playButton = true; showGame = false"> Quit </button>
             <div class="Instruction">
-                <p>Drag the countries in order of population descending (from highest population to lowest)</p>
+                <p> {{ categoryText }} </p>
             </div>
             
             <div v-show="gameDraggable">
                 <div>
-                    <p>Question {{ gameCount }}/{{ maxGames }}</p>
+                    <p>Question {{ gameCount+1 }}/{{ maxGames }}</p>
                 </div>
                 <p>Stars: {{ stars }}</p>
                 <ul>
@@ -50,7 +40,7 @@
                     @dragstart="dragStart(index)" 
                     @dragover.prevent 
                     @drop="drop(index)">
-                    {{ item.id }}
+                    {{ item.name }}
                 </li>
                 </ul>
 
@@ -59,11 +49,14 @@
                     <p>Correct Answer is: {{ getCorrectOrder() }} </p>
                 </div>
                 
-                <button @click="checkListIfCorrect();">Submit</button>
+                <button @click="submitAnswers();">Submit</button>
             </div>
 
             <div v-show="showResults">
-
+                <div>show how many stars gained here</div>
+                <div>{{ starPrompt }}</div>
+                <button @click="randomizeList(); showCategory = false; showGame = true;">Try again?</button>
+                <button @click="playButton = true; showCategory = false"> Main Menu </button>
             </div>
 
         </div>
@@ -80,10 +73,11 @@ export default {
             showCategory: false,
             showDifficulty: false,
             showGame: false,
+            showResults: false,
             displayCorrectAnswer: false,
             gameDraggable: true,
 
-            difficultyText: '',
+            starPrompt: '',
             categoryText: '',
 
             category: 0,
@@ -93,58 +87,199 @@ export default {
             gameCount: 0,
             
             random_items: [],
-            categorySelection: [
+            questionData: [
                 {
                     id: 0,
-                    name: 'Country Population',
                     tag: 'Geography',
                     instruction: 'Arrange the countries in order of population descending (from highest population to lowest)',
                     data: [
-                        { id: 1, name: 'China', population: 1439323776 },
-                        { id: 2, name: 'India', population: 1380004385 },
-                        { id: 3, name: 'United States', population: 331002651 },
-                        { id: 4, name: 'Indonesia', population: 273523615 },
-                        { id: 5, name: 'Pakistan', population: 273523615 },
-                        { id: 6, name: 'Brazil', population: 	212559417 },
-                        { id: 7, name: 'Nigeria', population: 206139589 },
-                        { id: 8, name: 'Bangladesh', population: 164689383 },
-                        { id: 9, name: 'Russia', population: 145934462 },
-                        { id: 10, name: 'Mexico', population: 128932753 },
+                        { id: 1, name: 'China', info: "1,439,323,776" },
+                        { id: 2, name: 'India', info: "1,380,004,385" },
+                        { id: 3, name: 'United States', info: "331,002,651" },
+                        { id: 4, name: 'Indonesia', info: "273,523,615" },
+                        { id: 5, name: 'Brazil', info: "212,559,417" },
                     ]
                 },
                 {
                     id: 1,
-                    name: 'Country Area',
                     tag: 'Geography',
-                    instruction: 'Arrange the countries in order of area descending (from highest area to lowest)',
+                    instruction: 'Arrange the countries in order of area descending (from highest area to lowest).',
                     data: [
-                        { id: 1, name: 'CA China', area: 9640821 },
-                        { id: 2, name: 'India', area: 3287590 },
-                        { id: 3, name: 'United States', area: 9826675 },
-                        { id: 4, name: 'Indonesia', area: 1904569 },
-                        { id: 5, name: 'Pakistan', area: 803940 },
-                        { id: 6, name: 'Brazil', area: 8515767 },
-                        { id: 7, name: 'Nigeria', area: 923768 },
-                        { id: 8, name: 'Bangladesh', area: 147570 },
-                        { id: 9, name: 'Russia', area: 17098242 },
-                        { id: 10, name: 'Mexico', area: 1964375 },
+                        { id: 1, name: 'Russia', info: "17,098,242 km^2" },
+                        { id: 2, name: 'Canada', info: "9,984,670 km^2" },
+                        { id: 3, name: 'China', info: "9,596,960 km^2" },
+                        { id: 4, name: 'India', info: "3,287,263 km^2" },
+                        { id: 5, name: 'Egypt', info: "1,001,450 km^2" },
                     ]
                 },
                 {
                     id: 2,
-                    name: 'Invention Timeline',
                     tag: 'History',
+                    instruction: 'Arrange the inventions in order of date descending (from earliest to latest).',
                     data: [
-                        { id: 1, name: 'Wheel', date: '5000 BC'},
-                        { id: 2, name: 'Gun Powder', date: '9th century'},
-                        { id: 3, name: 'Germany invades Luxembourg and Belgium. France invades Alsace. British forces arrive in France. \
-                                        Nations allied against Germany were eventually to include Great Britain, Russia, Italy, Australia, \
-                                        New Zealand, South Africa, Rhodesia, Romania, Greece, France, Belgium, United States, Canada, Serbia, \
-                                        India, Portugal, Montenegro, and Poland.', date: 'August 2-7, 1914'},
-                        { id: 4, name: 'Austria-Hungary invades Russia.', date: 'August 10, 1914'},
-                        { id: 5, name: 'Allied forces halt German advance into France during First Battle of the Marne.', date: 'September 9, 1914'},
+                        { id: 1, name: 'Wheel', info: '5000 BC'},
+                        { id: 2, name: 'Gun Powder', info: '9th century'},
+                        { id: 3, name: 'Electric Lamp', info: '1879'},
+                        { id: 4, name: 'Car', info: '1886'},
+                        { id: 5, name: 'Airplane', info: '1903'},
                     ]
-                }
+                },
+                {
+                    id: 3,
+                    tag: 'History',
+                    instruction: 'Arrange which country that has a highest casualties in World War II.',
+                    data: [
+                        { id: 1, name: 'Soviet Union', info: '20 to 27 million'},
+                        { id: 2, name: 'China', info: '15 to 20 million'},
+                        { id: 3, name: 'Germany', info: '6 to 7.4 million'},
+                        { id: 4, name: 'Poland', info: '5.9 to 6 million'},
+                        { id: 5, name: 'Japan', info: '2.5 to 3.1 million'},
+                    ]
+                },
+                {
+                    id: 4,
+                    tag: 'History',
+                    instruction: 'Arrange who has the longest term being president of the philippines.',
+                    data: [
+                        { id: 1, name: 'Ferdinand Marcos', info: '20 yrs, 57 days'},
+                        { id: 2, name: 'Gloria Macapagal Arroyo', info: '9 yrs, 161 days'},
+                        { id: 3, name: 'Manuel L. Quezon', info: '8 yrs, 260 days'},
+                        { id: 4, name: 'Corazon Aquino', info: '6 yrs, 126 days'},
+                        { id: 5, name: 'Fidel V. Ramos', info: '6 yrs, 0 day'},
+                    ]
+                },
+                {
+                    id: 5,
+                    tag: 'Geography',
+                    instruction: 'Arrange which country has most islands to least.',
+                    data: [
+                        { id: 1, name: 'Sweden', info: '267,570'},
+                        { id: 2, name: 'Norway', info: '239,057'},
+                        { id: 3, name: 'Finland', info: '178,947'},
+                        { id: 4, name: 'Canada', info: '52,455'},
+                        { id: 5, name: 'Philippines', info: '7,641'},
+                    ]
+                },
+                {
+                    id: 6,
+                    tag: 'Geography',
+                    instruction: 'Arrange which country has highest covid 19 cases.',
+                    data: [
+                        { id: 1, name: 'United States', info: '106,359,724'},
+                        { id: 2, name: 'India', info: '44,745,104'},
+                        { id: 3, name: 'France', info: '39,827,031'},
+                        { id: 4, name: 'Germany', info: '38,368,891'},
+                        { id: 5, name: 'Brazil', info: '37,319,254'},
+                    ]
+                },
+                {
+                    id: 7,
+                    tag: 'Geography',
+                    instruction: 'Arrange which country has a lowest crime rate.',
+                    data: [
+                        { id: 1, name: 'Iceland', info: '1.107'},
+                        { id: 2, name: 'New Zealand', info: '1.269'},
+                        { id: 3, name: 'Ireland', info: '1.288'},
+                        { id: 4, name: 'Denmark', info: '1.296'},
+                        { id: 5, name: 'Austria', info: '1.3'},
+                    ]
+                },
+                {
+                    id: 8,
+                    tag: 'Geography',
+                    instruction: 'Arrange which country has a highest suicidal rates.',
+                    data: [
+                        { id: 1, name: 'Lesotho', info: '72.4'},
+                        { id: 2, name: 'Guyana', info: '40.3'},
+                        { id: 3, name: 'Eswatini', info: '29.4'},
+                        { id: 4, name: 'South Korea', info: '28.6'},
+                        { id: 5, name: 'Kiribati', info: '28.3'},
+                    ]
+                },
+                {
+                    id: 9,
+                    tag: 'History',
+                    instruction: 'Arrange which application was created first.',
+                    data: [
+                        { id: 1, name: 'Yahoo', info: '1994'},
+                        { id: 2, name: 'Google', info: '1998'},
+                        { id: 3, name: 'LinkedIn', info: '2002'},
+                        { id: 4, name: 'Skype', info: '2003'},
+                        { id: 5, name: 'Facebook', info: '2004'},
+                    ]
+                },
+                {
+                    id: 10,
+                    tag: 'Geography',
+                    instruction: 'Arrange which countries has most beauty pageants crowns.',
+                    data: [
+                        { id: 1, name: 'Venezuela', info: '23'},
+                        { id: 2, name: 'Philippines', info: '15'},
+                        { id: 3, name: 'India', info: '10'},
+                        { id: 4, name: 'United Kingdom', info: '7'},
+                        { id: 5, name: 'Sweden', info: '6'},
+                    ]
+                },
+                {
+                    id: 11,
+                    tag: 'Geography',
+                    instruction: 'Arrange the countries according to their English literacy rates.',
+                    data: [
+                        { id: 1, name: 'United States', info: '100%'},
+                        { id: 2, name: 'Canada', info: '97%'},
+                        { id: 3, name: 'Ireland', info: '91%'},
+                        { id: 4, name: 'South Africa', info: '51%'},
+                        { id: 5, name: 'India', info: '12%'},
+                    ]
+                },
+                {
+                    id: 12,
+                    tag: 'Geography',
+                    instruction: 'Arrange the countries according to their English literacy rates.',
+                    data: [
+                        { id: 1, name: '', info: ''},
+                        { id: 2, name: '', info: ''},
+                        { id: 3, name: '', info: ''},
+                        { id: 4, name: '', info: ''},
+                        { id: 5, name: '', info: ''},
+                    ]
+                },
+                {
+                    id: 13,
+                    tag: 'Geography',
+                    instruction: 'Arrange the countries from highest to lowest based on their olympic ranking.',
+                    data: [
+                        { id: 1, name: 'Great Britain', info: '883 medals'},
+                        { id: 2, name: 'France', info: '731 medals'},
+                        { id: 3, name: 'Italy', info: '725 medals'},
+                        { id: 4, name: 'Sweden', info: '652 medals'},
+                        { id: 5, name: 'Australia', info: '526 medals'},
+                    ]
+                },
+                {
+                    id: 14,
+                    tag: 'Science',
+                    instruction: '',
+                    data: [
+                        { id: 1, name: '', info: ''},
+                        { id: 2, name: '', info: ''},
+                        { id: 3, name: '', info: ''},
+                        { id: 4, name: '', info: ''},
+                        { id: 5, name: '', info: ''},
+                    ]
+                },
+                {
+                    id: 15,
+                    tag: 'Science',
+                    instruction: '',
+                    data: [
+                        { id: 1, name: '', info: ''},
+                        { id: 2, name: '', info: ''},
+                        { id: 3, name: '', info: ''},
+                        { id: 4, name: '', info: ''},
+                        { id: 5, name: '', info: ''},
+                    ]
+                },
             ],
         };
     },
@@ -164,35 +299,23 @@ export default {
             const draggedItem = this.random_items.splice(this.draggedItemIndex, 1)[0];
             this.random_items.splice(index, 0, draggedItem);
         },
-        selectDifficulty(difficultyIndex) {
-            switch(difficultyIndex) {
-                case 0:
-                    this.difficulty = this.easy;
-                    this.difficultyText = 'Easy';
-                    break;
-                case 1:
-                    this.difficulty = this.intermediate;
-                    this.difficultyText = 'Intermediate';
-                    break;
-                case 2:
-                    this.difficulty = this.difficult;
-                    this.difficultyText = 'Difficult';
-                    break;
-            }
-        },
         selectCategory(categoryIndex) {
             switch(categoryIndex) {
-                case 0:
-                    this.category = this.categorySelection[0].data;
-                    this.categoryText = this.categorySelection[0].name;
+                case 0: // geography
+                    const geographyQuestions = this.questionData.filter(item => item.tag === 'Geography');
+                    const geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
+                    this.category = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].data;
+                    this.categoryText = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].instruction;
                     break;
-                case 1:
-                    this.category = this.categorySelection[1].data;
-                    this.categoryText = this.categorySelection[1].name;
+                case 1: // history
+                const historyQuestions = this.questionData.filter(item => item.tag === 'History');
+                    const historyIndex = Math.floor(Math.random() * historyQuestions.length);
+                    this.category = this.questionData.filter(item => item.tag === 'History')[historyIndex].data;
+                    this.categoryText = this.questionData.filter(item => item.tag === 'History')[historyIndex].instruction;
                     break;
                 case 2:
-                    this.category = this.categorySelection[2].data;
-                    this.categoryText = this.categorySelection[2].name;
+                    this.category = this.questionData[2].data;
+                    this.categoryText = this.questionData[2].name;
                     break;
             }
         },
@@ -218,7 +341,20 @@ export default {
         },
         getCorrectOrder() {
             const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
-            return sortedList.map(item => item.id);
+            const correctOrder = [];
+            for (let i = 0; i < sortedList.length; i++) {
+                correctOrder.push(sortedList[i].name);
+            }   
+            return correctOrder.join(', ');
+        },
+
+        submitAnswers() {
+            if (this.gameCount == this.maxGames-1) {
+                this.showGame = false;
+                this.showResults = true;
+            } else {
+                this.checkListIfCorrect();
+            }
         },
         checkListIfCorrect() {
             const currentOrder = this.getCurrentOrder();
@@ -235,7 +371,29 @@ export default {
                 this.randomizeList();
             }
         },
-        // if gamecount is 5, then display show results
+        resultPrompts() {
+            if (this.stars == 1){
+                return "Good try! You got 1 star!";
+            } else if (this.stars == 2) {
+                return "Good job! You got 2 stars!";
+            } else if (this.stars == 3) {
+                return "Nice! You got 3 stars!";
+            } else if (this.stars == 4) {
+                return "Very good! You got 4 stars!";
+            } else if (this.stars == 5) {
+                return "Excellent! You got a perfect score!";
+            }
+        },
+        getGeographyData() {
+            const geographyData = [];
+            for (let i = 0; i < this.questionData.length; i++) {
+                if (this.questionData[i].tag === 'Geography') {
+                    geographyData.push(this.questionData[i].data);
+                }
+            }
+            return geographyData;
+        },
+
 
     },
 };
