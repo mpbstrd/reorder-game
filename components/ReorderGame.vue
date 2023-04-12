@@ -48,23 +48,23 @@
             <div v-show="displayCorrectAnswer">
                 <div class="modal">
                    <div class="modal-content">
-                       <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                       <p>Correct Answer is: {{ getCorrectOrderString() }}</p>
                            <div class="modal-footer">
-                               <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
-                               <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
+                               <button type="button" class="btn btn-secondary" @click="closeModal" data-dismiss="modal">Proceed</button>
+                               <button type="button" class="btn btn-primary"  v-if="correctAnswer">Next</button>
                            </div>
                        </div>
                    </div>
                </div>
 
-            <button @click="playButton = true; showGame = false"> Quit </button>
+            <button @click="playButton = true; showGame = false; resetGame(); "> Quit </button>
         </div>
 
         <div v-show="showResults">
             <div>show how many stars gained here</div>
             <div>{{ starPrompt }}</div>
-            <button @click="randomizeList(); showCategory = false; showGame = true;">Try again?</button>
-            <button @click="playButton = true; showResults = false; showCategory = false"> Main Menu </button>
+            <button @click="randomizeList(); resetGame(); showCategory = false; showGame = true;">Try again?</button>
+            <button @click="randomizeList(); resetGame(); playButton = true; showResults = false; showCategory = false"> Main Menu </button>
         </div>
     </div>
 </template>
@@ -81,10 +81,12 @@ export default {
             showResults: false,
             displayCorrectAnswer: false,
             gameDraggable: true,
+            correctAnswer: false,
 
             catIndex: 0,
             starPrompt: '',
             categoryText: '',
+            globalCatString: '',
 
             category: 0,
             stars: 0,
@@ -296,17 +298,13 @@ export default {
         selectCategory(categoryIndex) {
             switch(categoryIndex) {
                 case 0: // geography
-                    let geographyQuestions = this.questionData.filter(item => item.tag === 'Geography');
-                    let geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
-                    this.category = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].data;
-                    this.categoryText = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].instruction;
+                    this.globalCatString = "Geography";
+                    this.categorizer("Geography");
                     this.randomizeList();
                     break;
                 case 1: // history
-                    let historyQuestions = this.questionData.filter(item => item.tag === 'History');
-                    let historyIndex = Math.floor(Math.random() * historyQuestions.length);
-                    this.category = this.questionData.filter(item => item.tag === 'History')[historyIndex].data;
-                    this.categoryText = this.questionData.filter(item => item.tag === 'History')[historyIndex].instruction;
+                    this.globalCatString = "History";
+                    this.categorizer("History");
                     this.randomizeList();
                     break;
                 case 2:
@@ -314,6 +312,12 @@ export default {
                     this.categoryText = this.questionData[2].name;
                     break;
             }
+        },
+        categorizer(categoryString){
+            let geographyQuestions = this.questionData.filter(item => item.tag === categoryString);
+            let geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
+            this.category = this.questionData.filter(item => item.tag === categoryString)[geographyIndex].data;
+            this.categoryText = this.questionData.filter(item => item.tag === categoryString)[geographyIndex].instruction;
         },
         randomizeList() {
             const maxItems = 5;
@@ -335,13 +339,21 @@ export default {
             }
             return currentOrder;
         },
-        getCorrectOrder() {
+        getCorrectOrderString() {
             const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
             const correctOrder = [];
             for (let i = 0; i < sortedList.length; i++) {
                 correctOrder.push(sortedList[i].name);
             }   
             return correctOrder.join(', ');
+        },
+        getCorrectOrder() {
+            const sortedList = this.random_items.slice().sort((a, b) => a.id - b.id);
+            const correctOrder = [];
+            for (let i = 0; i < sortedList.length; i++) {
+                correctOrder.push(sortedList[i].id);
+            }   
+            return correctOrder;
         },
 
         submitAnswers() {
@@ -355,17 +367,19 @@ export default {
         checkListIfCorrect() {
             const currentOrder = this.getCurrentOrder();
             const correctOrder = this.getCorrectOrder();
+            console.log("current: " + currentOrder);
+            console.log("correct: " + correctOrder);
             if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
                 this.stars+=1;
                 this.gameCount += 1;
                 this.displayCorrectAnswer = false;
-                
+                this.categorizer(this.globalCatString);
+                this.randomizeList();
             } else {
                 // display correct order
                 this.gameCount += 1;
                 this.displayCorrectAnswer = true;
             }
-            this.selectCategory(0);
         },
         resultPrompts() {
             if (this.stars == 1){
@@ -389,9 +403,15 @@ export default {
             }
             return geographyData;
         },
-
-
+        resetGame() {
+            this.showGame = false;
+            this.showResults = false;
+            this.stars = 0;
+            this.gameCount = 0;
+        },
         closeModal() {
+            this.categorizer(this.globalCatString); 
+            this.randomizeList(); 
             this.displayCorrectAnswer = false;
         },
 
