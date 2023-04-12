@@ -6,8 +6,8 @@
         </div>
 
         <div v-show="showCategory">
-            <button @click=" selectCategory(0); randomizeList(); showCategory = false; showGame = true;" >Geography</button><br>
-            <button @click=" selectCategory(1); randomizeList(); showCategory = false; showGame = true;">History</button><br>
+            <button @click=" selectCategory(0); showCategory = false; showGame = true;" >Geography</button><br>
+            <button @click=" selectCategory(1); showCategory = false; showGame = true;">History</button><br>
             <button @click="playButton = true; showCategory = false"> Back </button>
         </div>
 
@@ -21,9 +21,7 @@
                 if max games reached show score
              -->
 
-
-            <p>You have selected {{difficultyText}}. Goodluck!</p>
-            <button @click="playButton = true; showGame = false"> Quit </button>
+            
             <div class="Instruction">
                 <p> {{ categoryText }} </p>
             </div>
@@ -43,31 +41,31 @@
                     {{ item.name }}
                 </li>
                 </ul>
-
-                <div v-show="displayCorrectAnswer">
-                 <div class="modal">
-                    <div class="modal-content">
-                        <p>Correct Answer is: {{ getCorrectOrder() }} </p>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
-                                <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
                 <button @click="submitAnswers();">Submit</button>
             </div>
+            
+            <div v-show="displayCorrectAnswer">
+                <div class="modal">
+                   <div class="modal-content">
+                       <p>Correct Answer is: {{ getCorrectOrder() }} </p>
+                           <div class="modal-footer">
+                               <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeModal">Proceed</button>
+                               <button type="button" class="btn btn-primary" @click="nextQuestion" v-if="correctAnswer">Next</button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
 
-            <div v-show="showResults">
-                <div>show how many stars gained here</div>
-                <div>{{ starPrompt }}</div>
-                <button @click="randomizeList(); showCategory = false; showGame = true;">Try again?</button>
-                <button @click="playButton = true; showCategory = false"> Main Menu </button>
-            </div>
-
+            <button @click="playButton = true; showGame = false"> Quit </button>
         </div>
 
+        <div v-show="showResults">
+            <div>show how many stars gained here</div>
+            <div>{{ starPrompt }}</div>
+            <button @click="randomizeList(); showCategory = false; showGame = true;">Try again?</button>
+            <button @click="playButton = true; showResults = false; showCategory = false"> Main Menu </button>
+        </div>
     </div>
 </template>
   
@@ -84,6 +82,7 @@ export default {
             displayCorrectAnswer: false,
             gameDraggable: true,
 
+            catIndex: 0,
             starPrompt: '',
             categoryText: '',
 
@@ -242,18 +241,6 @@ export default {
                 {
                     id: 12,
                     tag: 'Geography',
-                    instruction: 'Arrange the countries according to their English literacy rates.',
-                    data: [
-                        { id: 1, name: '', info: ''},
-                        { id: 2, name: '', info: ''},
-                        { id: 3, name: '', info: ''},
-                        { id: 4, name: '', info: ''},
-                        { id: 5, name: '', info: ''},
-                    ]
-                },
-                {
-                    id: 13,
-                    tag: 'Geography',
                     instruction: 'Arrange the countries from highest to lowest based on their olympic ranking.',
                     data: [
                         { id: 1, name: 'Great Britain', info: '883 medals'},
@@ -309,16 +296,18 @@ export default {
         selectCategory(categoryIndex) {
             switch(categoryIndex) {
                 case 0: // geography
-                    const geographyQuestions = this.questionData.filter(item => item.tag === 'Geography');
-                    const geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
+                    let geographyQuestions = this.questionData.filter(item => item.tag === 'Geography');
+                    let geographyIndex = Math.floor(Math.random() * geographyQuestions.length);
                     this.category = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].data;
                     this.categoryText = this.questionData.filter(item => item.tag === 'Geography')[geographyIndex].instruction;
+                    this.randomizeList();
                     break;
                 case 1: // history
-                const historyQuestions = this.questionData.filter(item => item.tag === 'History');
-                    const historyIndex = Math.floor(Math.random() * historyQuestions.length);
+                    let historyQuestions = this.questionData.filter(item => item.tag === 'History');
+                    let historyIndex = Math.floor(Math.random() * historyQuestions.length);
                     this.category = this.questionData.filter(item => item.tag === 'History')[historyIndex].data;
                     this.categoryText = this.questionData.filter(item => item.tag === 'History')[historyIndex].instruction;
+                    this.randomizeList();
                     break;
                 case 2:
                     this.category = this.questionData[2].data;
@@ -370,13 +359,13 @@ export default {
                 this.stars+=1;
                 this.gameCount += 1;
                 this.displayCorrectAnswer = false;
-                this.randomizeList();
+                
             } else {
                 // display correct order
                 this.gameCount += 1;
                 this.displayCorrectAnswer = true;
-                this.randomizeList();
-            } 
+            }
+            this.selectCategory(0);
         },
         resultPrompts() {
             if (this.stars == 1){
