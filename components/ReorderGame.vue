@@ -61,7 +61,9 @@
         </div>
 
         <div v-show="showResults">
-            <div>show how many stars gained here</div>
+            <div>
+                <ScoreStars :score="stars" />
+            </div>
             <div>{{ starPrompt }}</div>
             <button @click="randomizeList(); resetGame(); showCategory = false; showGame = true;">Try again?</button>
             <button @click="randomizeList(); resetGame(); playButton = true; showResults = false; showCategory = false"> Main Menu </button>
