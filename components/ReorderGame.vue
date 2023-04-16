@@ -62,6 +62,7 @@
 
         <div v-show="showResults">
             <div>
+                <p>{{ resultPrompts() }}</p>
                 <ScoreStars :score="stars" />
             </div>
             <div>{{ starPrompt }}</div>
@@ -86,6 +87,7 @@ export default {
             correctAnswer: false,
 
             catIndex: 0,
+            promptResults: '',
             starPrompt: '',
             categoryText: '',
             globalCatString: '',
@@ -385,15 +387,17 @@ export default {
         },
         resultPrompts() {
             if (this.stars == 1){
-                return "Good try! You got 1 star!";
+                return this.promptResults = "Good try! You got 1 star!";
             } else if (this.stars == 2) {
-                return "Good job! You got 2 stars!";
+                return this.promptResults =  "Good job! You got 2 stars!";
             } else if (this.stars == 3) {
-                return "Nice! You got 3 stars!";
+                return this.promptResults =  "Nice! You got 3 stars!";
             } else if (this.stars == 4) {
-                return "Very good! You got 4 stars!";
+                return this.promptResults =  "Very good! You got 4 stars!";
             } else if (this.stars == 5) {
-                return "Excellent! You got a perfect score!";
+                return this.promptResults =  "Excellent! You got a perfect score!";
+            } else {
+                return this.promptResults =  "You didn't get any stars. Try again!";
             }
         },
         getGeographyData() {
