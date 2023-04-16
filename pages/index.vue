@@ -5,12 +5,14 @@
 </template>
 
 <script>
-import ReorderGame from '@/components/ReorderGame.vue';
+import ReorderGame from "@/components/ReorderGame.vue";
+import ScoreStars from "@/components/ScoreStars.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    ReorderGame
+    ReorderGame,
+    ScoreStars,
   },
-}
+};
 </script>
