@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <audio ref="audioPlayer">
-      <source :src="audioSrc" type="audio/mpeg">
-    </audio>
     <ReorderGame />
   </div>
 </template>
@@ -16,16 +13,6 @@ export default {
   components: {
     ReorderGame,
     ScoreStars,
-  },
-  data() {
-    return {
-      audioSrc: '/game.mp3',
-    };
-  },
-  mounted() {
-    this.$refs.audioPlayer.addEventListener('canplay', () => {
-      this.$refs.audioPlayer.play();
-    });
   },
 };
 </script>
